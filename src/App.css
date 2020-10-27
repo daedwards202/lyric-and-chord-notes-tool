@@ -1,10 +1,12 @@
-.App {
-  text-align: center;
+html {
+  background-color: #474853;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App {
+  text-align: center;
+  min-height: 1000px;
+  /* background-color: black; */
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -13,26 +15,40 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+#lyrics {
+  width: 90%;
+  color: black;
+  margin: 20px auto;
+  list-style: none;
+  padding-left: 0;
 }
 
-.App-link {
-  color: #61dafb;
+#lyrics li {
+  text-align: left;
+  margin: 10px 0;
+  text-decoration-style: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+header {
+  background-color: white;
+}
+
+body {
+  width: 1098px;
+  margin: 0 auto;
+  background: #EAE7DC;
+}
+
+h1 {
+  margin: 0;
+  padding: 20px 0 ;
+}
+
+form {
+  margin: auto;
+  width: 90%;
+}
+
+#outlined-basic {
+  color: black;
 }
