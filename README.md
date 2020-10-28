@@ -1,7 +1,11 @@
 URL: https://lyric-and-chord-notes-tool.herokuapp.com
 
-- Created using `npx create-react-app song-writer-app`.
+Setup:
+
+- Created using `npx create-react-app lyrics-and-chords-tool`.
 - `npm start` runs the app in development mode.
+
+Modules:
 
 - MaterialUI: `npm i @material-ui/core`
 - Styled Components: `npm i styled-components`
