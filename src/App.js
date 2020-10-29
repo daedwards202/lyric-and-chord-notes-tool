@@ -1,5 +1,5 @@
 import './App.css';
-import { TextField, IconButton } from '@material-ui/core';
+import { TextField, IconButton, Button } from '@material-ui/core';
 import styled from "styled-components";
 import React, { useState, useReducer } from "react";
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -64,6 +64,11 @@ function App() {
   const arrayMove = require('array-move');
 
   const [extraFormIndex, setExtraFormIndex] = useState(-1)
+  const [hideButtons, setHideButtons] = useState(false)
+
+  const displayButtons = (e) => {
+    setHideButtons(!hideButtons)
+  }
 
   const changeExtraFormIndex = (index) => {
     setExtraFormIndex(index)
@@ -128,6 +133,7 @@ function App() {
   const updateExtraTextValue = (e) => {
     if (e.target.value === '\n') {
       e.preventDefault()
+      dispatchLines({type: "insert", value: '\n', extraValue: extraFormIndex+1})
     }
     else 
       setExtraTextValue(e.target.value)
@@ -136,6 +142,7 @@ function App() {
   const updateTextValue = (e) => {
     if (e.target.value === '\n') {
       e.preventDefault()
+      dispatchLines({type: "add", value: '\n'})
     }
     else 
       setTextValue(e.target.value)
@@ -148,15 +155,17 @@ function App() {
       <div id="body">
         <h1>Lyrics & Chords</h1>
         <div id="lines">
+          {lines.length > 0 ? <Button onClick={displayButtons}>{hideButtons ? 'Show buttons' : 'Hide buttons'}</Button> : <></>}
           {lines.map((line, index) => {
-            var chords = '\xa0\xa0\xa0';
+            var chords = ''; //'\xa0\xa0\xa0';
             var lyrics = '';
             var foundChord = false;
             var foundIndex = false;
             var previousWordLen = 0;
             var chord = '';
             var indexString = '';
-            var indexNum = 0
+            var indexNum = 0;
+            var chordExcess = 0;
             for (var i = 0; i < line.length; i++) {
               if (line.charAt(i) === '[')
                 foundChord = true;
@@ -165,11 +174,15 @@ function App() {
                 foundIndex = false;
                 if (indexString.length > 0)
                   indexNum = parseInt(indexString)
-                console.log('Word length: ' + previousWordLen)
-                console.log('Index: ' + indexNum)
+                // console.log('Word length: ' + previousWordLen)
+                // console.log('Index: ' + indexNum)
                 // console.log('Prior: ' + chords.substring(0, chords.length-previousWordLen+indexNum))
                 // console.log('Post: ' + chords.substring(chords.length-previousWordLen+chord.length+indexNum, chords.length))
+                var oldChordsLen = chords.length;
                 chords = chords.substring(0, chords.length-previousWordLen+indexNum) + chord + chords.substring(chords.length-previousWordLen+chord.length+indexNum, chords.length);
+                var newChordsLen = chords.length;
+                chordExcess = newChordsLen - oldChordsLen;
+                console.log(chordExcess)
                 chord = '';
                 indexString = '';
               } else if (foundChord) {
@@ -177,6 +190,7 @@ function App() {
                   foundIndex = true;
                 else if (foundIndex) {
                   indexString += line.charAt(i);
+                  // console.log(indexString)
                 }
                 else 
                   chord += line.charAt(i)
@@ -184,29 +198,46 @@ function App() {
                 if (line.charAt(i+1) !== ' ') {
                   if (line.charAt(i) !== ' ')
                     previousWordLen += 1;
-                  chords = chords + '\xa0';
+                  if (chordExcess > 0)
+                    chordExcess--;
+                  else 
+                    chords = chords + '\xa0'; //'_';
                 } 
+                else {
+                  if (line.charAt(i) !== ' ') {
+                    if (chordExcess > 0)
+                      chordExcess--;
+                    else 
+                      chords = chords + '\xa0'; //'_';
+                  }
+                }
                 if (line.charAt(i) === ' ') {
                   previousWordLen = 0;
                 }
                 lyrics = lyrics + line.charAt(i);
               }
-              console.log(lyrics)
-              console.log(chords)
+              // console.log(lyrics)
+              // console.log(chords)
             }
             return (
               <div key={'line' + index} id="line">
                 <div id="chordsLine">
                   <p key={'chord' + index}>{chords}</p>
-                  { index === extraFormIndex ? 
-                  <RightAlignedButton key={'remove' + index} onClick={() => changeExtraFormIndex(-1)}><RemoveIcon fontSize='small'/></RightAlignedButton> :
-                  <RightAlignedButton key={'add' + index} onClick={() => changeExtraFormIndex(index)}><AddIcon fontSize='small'/></RightAlignedButton> }
-                  <RightAlignedButton key={'up' + index} onClick={() => moveLine(index, true)}><KeyboardArrowUpIcon fontSize='small'/></RightAlignedButton>
+                  { lyrics === '\n' || hideButtons ? <></> : 
+                  <React.Fragment>
+                    {(index === extraFormIndex) ? 
+                    <RightAlignedButton key={'remove' + index} onClick={() => changeExtraFormIndex(-1)}><RemoveIcon fontSize='small'/></RightAlignedButton> :
+                    <RightAlignedButton key={'add' + index} onClick={() => changeExtraFormIndex(index)}><AddIcon fontSize='small'/></RightAlignedButton> }
+                    <RightAlignedButton key={'up' + index} onClick={() => moveLine(index, true)}><KeyboardArrowUpIcon fontSize='small'/></RightAlignedButton>
+                  </React.Fragment>}
                 </div>
                 <div id="lyricsLine">
-                  <p key={'lyric' + index}>{index+1}: {lyrics}</p>
-                  <RightAlignedButton key={'remove' + index} onClick={() => removeLine(index)}><ClearIcon fontSize='small'/></RightAlignedButton>
-                  <RightAlignedButton key={'down' + index} onClick={() => moveLine(index, false)}><KeyboardArrowDownIcon fontSize='small'/></RightAlignedButton>
+                  <p key={'lyric' + index}>{lyrics}</p> 
+                  { lyrics === '\n' || hideButtons ? <></> :
+                  <React.Fragment>
+                    <RightAlignedButton key={'remove' + index} onClick={() => removeLine(index)}><ClearIcon fontSize='small'/></RightAlignedButton>
+                    <RightAlignedButton key={'down' + index} onClick={() => moveLine(index, false)}><KeyboardArrowDownIcon fontSize='small'/></RightAlignedButton>
+                  </React.Fragment>}
                 </div>
                 { (index === extraFormIndex) ?
                     <form id="extra" noValidate autoComplete="off">
