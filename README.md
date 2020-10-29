@@ -1,4 +1,4 @@
-URL: https://lyric-and-chord-notes-tool.herokuapp.com
+URL: https://lyrics-and-chords-tool.herokuapp.com/
 
 Setup:
 
