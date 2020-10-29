@@ -7,7 +7,7 @@ Setup:
 
 Modules:
 
-- MaterialUI: `npm i @material-ui/core`
+- MaterialUI: `npm i @material-ui/core`, `npm i @material-ui/icons`, `npm i @material-ui/styles`
 - Styled Components: `npm i styled-components`
 
 <!-- # Getting Started with Create React App
